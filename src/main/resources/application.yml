@@ -26,3 +26,6 @@ spring:
       ddl-auto: update
     show-sql: true
 
+debug: true
+
+
