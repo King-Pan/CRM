@@ -26,9 +26,15 @@ spring:
       ddl-auto: update
       naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
     show-sql: true
+    open-in-view: true
   thymeleaf:
     mode: LEGACYHTML5
     cache: false
 debug: true
+logger:
+  level:
+    org.springframework.data.jpa: debug
+
+
 
 

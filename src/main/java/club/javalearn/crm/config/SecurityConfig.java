@@ -1,8 +1,9 @@
 package club.javalearn.crm.config;
 
-import club.javalearn.crm.service.UserServiceImpl;
+import club.javalearn.crm.security.MyAuthenticationProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -24,26 +25,26 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private static final String KEY = "javalearn.club";
 
-    /**
-     * 注入我们自己的AuthenticationProvider
-     */
     @Autowired
-    private AuthenticationProvider provider;
+    private UserDetailsService userDetailsService;
+
+
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
                 .antMatchers("/css/**", "/js/**","/images/**", "/webjars/**", "**/favicon.ico", "/assets/**").permitAll()
-                .antMatchers( "/loginPage").permitAll()
+                .antMatchers( HttpMethod.POST,"/login").permitAll()
                 .antMatchers("/user/**").hasRole("USER")
                 //登录后可以访问任何路径
                 .anyRequest().authenticated();
 
-                http.formLogin().loginPage("/loginPage");
+                http.formLogin().loginPage("/loginPage").loginProcessingUrl("/login").permitAll();
                 http.logout().logoutSuccessUrl("/login?logout");
                 //开启了自动配置的记住我功能
                 http.rememberMe();
+                http.csrf().disable();
                 //开启自动配置的注销功能
                 //1、访问/logout 表示用户注销，清空session
                 //and().logout().permitAll().and()
@@ -61,8 +62,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(detailsService());
-        auth.authenticationProvider(provider);
+        auth.userDetailsService(userDetailsService);
+        auth.authenticationProvider(myAuthenticationProvider());
+    }
+
+    /**
+     * 注入我们自己的AuthenticationProvider
+     */
+    @Bean
+    public AuthenticationProvider myAuthenticationProvider(){
+        AuthenticationProvider provider = new MyAuthenticationProvider();
+        provider.
+        passwordEncoder
+        return new MyAuthenticationProvider();
     }
 
     @Bean
@@ -70,12 +82,5 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         // 使用 BCrypt 加密
         return new BCryptPasswordEncoder();
     }
-
-    @Bean
-    public UserDetailsService detailsService(){
-        return new UserServiceImpl();
-    }
-
-
 
 }
