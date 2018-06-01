@@ -1,12 +1,14 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
 <body>
 
-<header id="m_header" class="m-grid__item    m-header " m-minimize-offset="200" m-minimize-mobile-offset="200" th:fragment="header">
+<header id="m_header" class="m-grid__item    m-header " m-minimize-offset="200" m-minimize-mobile-offset="200"
+        th:fragment="header">
     <div class="m-container m-container--fluid m-container--full-height">
         <div class="m-stack m-stack--ver m-stack--desktop">
             <!-- BEGIN: Brand -->
@@ -1067,10 +1069,8 @@
                                                     <img src="assets/app/media/img/users/user4.jpg"
                                                          class="m--img-rounded m--marginless" alt="">
                                                 </div>
-                                                <div class="m-card-user__details">
-                                                    <span class="m-card-user__name m--font-weight-500">
-                                                        Mark Andre
-                                                        <
+                                                <div class="m-card-user__details" sec:authorize="isAuthenticated()">
+                                                    <span class="m-card-user__name m--font-weight-500" sec:authentication="name">
                                                     </span>
                                                     <a href="" class="m-card-user__email m--font-weight-300 m-link">
                                                         mark.andre@gmail.com
@@ -1138,10 +1138,12 @@
                                                     </li>
                                                     <li class="m-nav__separator m-nav__separator--fit"></li>
                                                     <li class="m-nav__item">
-                                                        <a href="snippets/pages/user/login-1.html"
-                                                           class="btn m-btn--pill    btn-secondary m-btn m-btn--custom m-btn--label-brand m-btn--bolder">
-                                                            Logout
-                                                        </a>
+                                                        <form th:action="@{/logout}" method="post">
+                                                            <a href="javascript:void(0);" onclick="logoutSubmit()"
+                                                               class="btn m-btn--pill btn-secondary m-btn m-btn--custom m-btn--label-brand m-btn--bolder">
+                                                                Logout
+                                                            </a>
+                                                        </form>
                                                     </li>
                                                 </ul>
                                             </div>
