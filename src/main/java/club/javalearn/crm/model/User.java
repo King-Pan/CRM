@@ -1,17 +1,14 @@
 package club.javalearn.crm.model;
 
-import club.javalearn.crm.Constants;
-import lombok.Data;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.Date;
+import java.util.*;
 
 /**
  * 用户信息
@@ -21,8 +18,12 @@ import java.util.Date;
  **/
 @Table(name = "sys_user")
 @Entity
-@Data
-public class User implements UserDetails, Serializable {
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString(exclude = {"roles"})
+public class User implements Serializable {
     /**
      * 用戶编码-自增长策略
      */
@@ -95,45 +96,28 @@ public class User implements UserDetails, Serializable {
     @Column(length = 10)
     private String status;
 
+
+
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "sys_user_role",joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "userId")},
+            inverseJoinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "roleId")})
+    @JsonIgnore
+    private Set<Role> roles = new HashSet<>();
+
+    @Transient
+    private List<Long> roleIds = new ArrayList<>();
+
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
-    }
-
-    /**
-     * JPA 的规范要求无参构造函数；
-     *      设为 protected 防止直接使用
-     */
-    protected User() {
-    }
-
-    @Override
-    public String getUsername() {
-        return null;
-    }
-
-
-    /**
-     * 账号是否过期
-     * @return
-     */
-    @Override
-    public boolean isAccountNonExpired() {
-        return !this.getStatus().equals(Constants.USER_STATUS_EXPIRED);
+    public boolean equals(Object obj) {
+        if(obj instanceof User){
+            User user = (User)obj;
+            return user.getUserId().equals(this.getUserId());
+        }
+        return false;
     }
 
     @Override
-    public boolean isAccountNonLocked() {
-        return !this.getStatus().equals(Constants.USER_STATUS_LOCKED);
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return this.getStatus().equals(Constants.USER_STATUS_ENABLE);
+    public int hashCode() {
+        return this.getUserId()!=null?this.getUserId().hashCode():0;
     }
 }

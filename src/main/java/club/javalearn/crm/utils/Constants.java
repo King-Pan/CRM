@@ -1,4 +1,4 @@
-package club.javalearn.crm;
+package club.javalearn.crm.utils;
 
 /**
  * crm

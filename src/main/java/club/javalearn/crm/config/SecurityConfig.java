@@ -4,7 +4,6 @@ import club.javalearn.crm.service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -24,6 +23,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 
     private static final String KEY = "javalearn.club";
+
+    /**
+     * 注入我们自己的AuthenticationProvider
+     */
+    @Autowired
+    private AuthenticationProvider provider;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -57,7 +62,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(detailsService());
-        auth.authenticationProvider(authenticationProvider());
+        auth.authenticationProvider(provider);
     }
 
     @Bean
@@ -71,13 +76,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new UserServiceImpl();
     }
 
-    @Bean
-    public AuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
-        authenticationProvider.setUserDetailsService(detailsService());
-        // 设置密码加密方式
-        //authenticationProvider.setPasswordEncoder(passwordEncoder());
-        return authenticationProvider;
-    }
+
 
 }
