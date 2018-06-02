@@ -1,10 +1,11 @@
 package club.javalearn.crm.config;
 
-import club.javalearn.crm.security.MyAuthenticationProvider;
+import club.javalearn.crm.security.DefaultAccessDeniedHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -12,6 +13,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.access.AccessDeniedHandler;
 
 /**
  * crm
@@ -44,7 +46,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 http.logout().logoutSuccessUrl("/login?logout");
                 //开启了自动配置的记住我功能
                 http.rememberMe();
-                http.csrf().disable();
+                http.csrf().disable().exceptionHandling().accessDeniedHandler(getAccessDeniedHandler());
+
                 //开启自动配置的注销功能
                 //1、访问/logout 表示用户注销，清空session
                 //and().logout().permitAll().and()
@@ -71,10 +74,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Bean
     public AuthenticationProvider myAuthenticationProvider(){
-        AuthenticationProvider provider = new MyAuthenticationProvider();
-        provider.
-        passwordEncoder
-        return new MyAuthenticationProvider();
+        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
+        authenticationProvider.setUserDetailsService(userDetailsService);
+        // 设置密码加密方式
+        authenticationProvider.setPasswordEncoder(passwordEncoder());
+        return authenticationProvider;
     }
 
     @Bean
@@ -83,4 +87,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
 
+    @Bean
+    AccessDeniedHandler getAccessDeniedHandler() {
+        return new DefaultAccessDeniedHandler();
+    }
 }

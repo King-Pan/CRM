@@ -69,12 +69,6 @@ public class User implements Serializable {
     private String password;
 
     /**
-     * 加密盐
-     */
-    @Column(length = 100)
-    private String slat;
-
-    /**
      * 用户头像地址
      */
     @Column(length = 256)
