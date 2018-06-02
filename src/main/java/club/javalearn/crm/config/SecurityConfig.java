@@ -65,7 +65,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         MyFilterSecurityInterceptor filterSecurityInterceptor =
                 new MyFilterSecurityInterceptor(securityMetadataSource, accessDecisionManager(), authenticationManagerBean());
         //在适当的地方加入
-        http.addFilterAt(filterSecurityInterceptor, FilterSecurityInterceptor.class);
+        http.addFilterBefore(filterSecurityInterceptor, FilterSecurityInterceptor.class);
 
         //开启自动配置的注销功能
         //1、访问/logout 表示用户注销，清空session
