@@ -53,13 +53,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .authorizeRequests()
                 .antMatchers("/css/**", "/js/**", "/images/**", "/webjars/**", "**/favicon.ico", "/assets/**").permitAll()
-                .antMatchers(HttpMethod.POST, "/login").permitAll()
-                .antMatchers("/user/**").hasRole("USER")
                 //登录后可以访问任何路径
                 .anyRequest().authenticated();
 
         http.formLogin().loginPage("/loginPage").loginProcessingUrl("/login").permitAll();
-        http.logout().logoutSuccessUrl("/login?logout");
+        http.logout().logoutSuccessUrl("/loginPage?logout").permitAll();
         //开启了自动配置的记住我功能
         http.rememberMe();
         http.csrf().disable().exceptionHandling().accessDeniedHandler(getAccessDeniedHandler());

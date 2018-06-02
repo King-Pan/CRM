@@ -14,6 +14,7 @@ import org.springframework.security.core.SpringSecurityMessageSource;
 import java.util.Collection;
 
 public class AccessDecisionManagerImpl implements AccessDecisionManager {
+
     protected MessageSourceAccessor messages = SpringSecurityMessageSource.getAccessor();
 
     /**
@@ -44,11 +45,6 @@ public class AccessDecisionManagerImpl implements AccessDecisionManager {
         throw new AccessDeniedException(messages.getMessage(
                 "AbstractAccessDecisionManager.accessDenied", "Access is denied"));
     }
-
-    public void setMessageSource(MessageSource messageSource) {
-        this.messages = new MessageSourceAccessor(messageSource);
-    }
-
     /**
      * @param attribute 权限信息
      * @return

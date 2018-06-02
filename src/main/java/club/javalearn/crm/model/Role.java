@@ -56,12 +56,12 @@ public class Role {
      */
     private Date updateTime;
 
-    @ManyToMany(mappedBy = "roles")
+    @ManyToMany(mappedBy = "roles",fetch = FetchType.EAGER)
     @JsonIgnore
     private Set<User> users = new HashSet<>();
 
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     @JoinTable(name = "sys_role_permission",joinColumns ={@JoinColumn(name = "role_id", referencedColumnName = "roleId")},
             inverseJoinColumns =  {@JoinColumn(name = "permission_id", referencedColumnName = "permissionId")})
     @JsonIgnore

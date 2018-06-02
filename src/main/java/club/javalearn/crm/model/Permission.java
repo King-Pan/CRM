@@ -58,7 +58,7 @@ public class Permission {
      */
     private Long parentId;
 
-    @ManyToMany(mappedBy = "permissions")
+    @ManyToMany(mappedBy = "permissions",fetch = FetchType.EAGER)
     @JsonIgnore
     private Set<Role> roles = new HashSet<>();
 
