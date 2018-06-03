@@ -4,7 +4,9 @@ import club.javalearn.crm.model.Permission;
 import club.javalearn.crm.model.Role;
 import club.javalearn.crm.repository.PermissionRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.access.SecurityConfig;
 import org.springframework.security.web.FilterInvocation;
@@ -29,7 +31,7 @@ public class CustomInvocationSecurityMetadataSourceService implements
     private PermissionRepository permissionRepository;
 
     // resourceMap及为key-url，value-Collection<ConfigAttribute>,资源权限对应Map
-    private static Map<String, Collection<ConfigAttribute>> resourceMap = null;
+    private static Map<MyGrantedAuthority, Collection<ConfigAttribute>> resourceMap = null;
 
     // 加载所有资源与权限的关系
     private void loadResourceDefine() {
@@ -43,7 +45,7 @@ public class CustomInvocationSecurityMetadataSourceService implements
                     auths.add(new SecurityConfig(role.getRoleName()));
                 }
                 log.info("权限=" + auths);
-                resourceMap.put(permission.getUrl(), auths);
+                resourceMap.put(new MyGrantedAuthority(permission.getUrl(),permission.getMethod()), auths);
             }
         }
     }
@@ -68,20 +70,25 @@ public class CustomInvocationSecurityMetadataSourceService implements
             loadResourceDefine();
         }
         if(resourceMap!=null && !resourceMap.isEmpty()){
-            Iterator<String> ite = resourceMap.keySet().iterator();
+            Iterator<MyGrantedAuthority> ite = resourceMap.keySet().iterator();
             //根据资源路径获得其所需的权限
             while (ite.hasNext()) {
-                String resURL = ite.next();
-                RequestMatcher requestMatcher = new AntPathRequestMatcher(resURL);
+                MyGrantedAuthority authority = ite.next();
+                RequestMatcher requestMatcher = new AntPathRequestMatcher(authority.getUrl(),authority.getMethod().toUpperCase());
                 if(requestMatcher.matches(filterInvocation.getHttpRequest())) {
+                    if(StringUtils.isNoneBlank(authority.getMethod()) && filterInvocation.getHttpRequest().getMethod().equalsIgnoreCase(authority.getMethod())){
+                        return  resourceMap.get(authority);
+                    }
+                    if(StringUtils.isBlank(authority.getMethod())){
+                        log.info("配置路径-->{}<--与请求路径匹配-->{}<--",authority.getUrl(),requestUrl);
+                        return resourceMap.get(authority);
+                    }
 
-                    log.info("配置路径-->{}<--与请求路径匹配-->{}<--",resURL,requestUrl);
-                    return resourceMap.get(resURL);
                 }
-                log.error("配置路径-->{}<--与请求路径不匹配-->{}<--",resURL,requestUrl);
+                log.error("配置路径-->{}<--与请求路径不匹配-->{}<--",authority.getUrl(),requestUrl);
             }
         }
-        return null;
+        throw new AccessDeniedException("no right");
     }
 
     public boolean supports(Class<?> arg0) {

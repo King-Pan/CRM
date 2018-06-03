@@ -53,10 +53,14 @@ public class Permission {
     @Column(length = 1)
     private String type;
 
+    @Column(length = 10)
+    private String method;
+
     /**
      * 权限父节点编码
      */
     private Long parentId;
+
 
     @ManyToMany(mappedBy = "permissions",fetch = FetchType.EAGER)
     @JsonIgnore

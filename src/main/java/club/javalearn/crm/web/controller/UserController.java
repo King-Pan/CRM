@@ -1,9 +1,6 @@
 package club.javalearn.crm.web.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * crm
@@ -20,7 +17,7 @@ public class UserController {
         return "用户列表";
     }
 
-    @GetMapping("/add")
+    @PostMapping("/add")
     public String userAdd(){
         return "用户新增";
     }
@@ -28,5 +25,15 @@ public class UserController {
     @GetMapping("/{id}")
     public String userList(@PathVariable("id")Long userId){
         return "用户查询";
+    }
+
+    @DeleteMapping("/{id}")
+    public String delete(@PathVariable("id")Long userId){
+        return "用户删除";
+    }
+
+    @DeleteMapping("/all")
+    public String all(){
+        return "查询所有用户信息-包括密码";
     }
 }
