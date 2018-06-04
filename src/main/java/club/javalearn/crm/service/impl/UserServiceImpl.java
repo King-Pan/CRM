@@ -1,6 +1,7 @@
-package club.javalearn.crm.service;
+package club.javalearn.crm.service.impl;
 
 import club.javalearn.crm.model.Role;
+import club.javalearn.crm.service.UserService;
 import club.javalearn.crm.utils.Constants;
 import club.javalearn.crm.model.User;
 import club.javalearn.crm.repository.UserRepository;

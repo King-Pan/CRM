@@ -65,6 +65,7 @@ public class CustomInvocationSecurityMetadataSourceService implements
             requestUrl = requestUrl.substring(0, firstQuestionMarkIndex);
         }
 
+
         log.info("请求处理后地址-->{}<-- ", requestUrl+"(?后面的参数去除)");
         if (resourceMap == null) {
             loadResourceDefine();
@@ -88,7 +89,7 @@ public class CustomInvocationSecurityMetadataSourceService implements
                 log.error("配置路径-->{}<--与请求路径不匹配-->{}<--",authority.getUrl(),requestUrl);
             }
         }
-        throw new AccessDeniedException("no right");
+        return null;
     }
 
     public boolean supports(Class<?> arg0) {

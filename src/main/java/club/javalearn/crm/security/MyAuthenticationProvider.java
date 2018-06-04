@@ -28,7 +28,8 @@ public class MyAuthenticationProvider implements AuthenticationProvider {
         // 这个是表单中输入的密码
         String password = (String) authentication.getPrincipal();
 
-        User user = (User) userDetailService.loadUserByUsername(userName); // 这里调用我们的自己写的获取用户的方法；
+        // 这里调用我们的自己写的获取用户的方法；
+        User user = (User) userDetailService.loadUserByUsername(userName);
         if (user == null) {
             throw new BadCredentialsException("用户名不存在");
         }

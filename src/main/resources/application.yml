@@ -35,6 +35,12 @@ logger:
   level:
     org.springframework.data.jpa: debug
 
+customer:
+  security:
+    browser:
+      signOutUrl: /loginPage?logout
+      rememberMeSeconds: 3600*24
+
 
 
 

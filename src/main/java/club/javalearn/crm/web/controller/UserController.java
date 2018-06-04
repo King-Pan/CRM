@@ -1,5 +1,7 @@
 package club.javalearn.crm.web.controller;
 
+import jdk.nashorn.internal.objects.annotations.Getter;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -32,7 +34,7 @@ public class UserController {
         return "用户删除";
     }
 
-    @DeleteMapping("/all")
+    @GetMapping("/all")
     public String all(){
         return "查询所有用户信息-包括密码";
     }
